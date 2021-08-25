@@ -1,8 +1,7 @@
 import sqlite3
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import cloudinary
-import cloudinary.uploader
+
 # location = "C:\\Users\\jchno\\PycharmProjects\\final-project\\my_db.db"
 
 
