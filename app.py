@@ -438,6 +438,26 @@ def updating_sales(sale_pro_id):
         return jsonify(response)
 
 
+# function to fetch one product out of the database
+@app.route('/view-one/', methods=['GET'])
+def view_aproduct():
+    products = []
+    try:
+
+        with sqlite3.connect('my_db.db') as connect:
+            connect.row_factory = dict_factory
+            cursor = connect.cursor()
+            cursor.execute("SELECT * FROM items where product_id = 7")
+            products = cursor.fetchall()
+
+    except Exception as e:
+        connect.rollback()
+        print("There was an error fetching results from the database: " + str(e))
+
+    finally:
+        return jsonify(products)
+
+
 if __name__ == "__main__":
     app.debug = True
     app.run(port=5001)
