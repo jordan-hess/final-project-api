@@ -127,7 +127,7 @@ def view_sale_product():
         return jsonify(products)
 
 
-# this code allows you to view products that are trending
+# this code allows you to view the number 1 product that is trending
 @app.route('/view-trend/', methods=['GET'])
 def view_trends():
     trend = []
@@ -137,6 +137,27 @@ def view_trends():
             connect.row_factory = dict_factory
             cursor = connect.cursor()
             cursor.execute("SELECT * FROM trend where trend_id= 1")
+            trend = cursor.fetchall()
+
+    except Exception as e:
+        connect.rollback()
+        print("There was an error fetching results from the database: " + str(e))
+
+    finally:
+        connect.close()
+        return jsonify(trend)
+
+
+# this code allows you to see all the products in the trending section
+@app.route('/view-trends/', methods=['GET'])
+def view_trend():
+    trend = []
+    try:
+
+        with sqlite3.connect('my_db.db') as connect:
+            connect.row_factory = dict_factory
+            cursor = connect.cursor()
+            cursor.execute("SELECT * FROM trend")
             trend = cursor.fetchall()
 
     except Exception as e:
