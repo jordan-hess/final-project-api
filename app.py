@@ -253,6 +253,26 @@ def view_trend6():
         return jsonify(trend)
 
 
+@app.route('/view-trends7/', methods=['GET'])
+def view_trend7():
+    trend = []
+    try:
+
+        with sqlite3.connect('my_db.db') as connect:
+            connect.row_factory = dict_factory
+            cursor = connect.cursor()
+            cursor.execute("SELECT * FROM trend where trend_id = 9")
+            trend = cursor.fetchall()
+
+    except Exception as e:
+        connect.rollback()
+        print("There was an error fetching results from the database: " + str(e))
+
+    finally:
+        connect.close()
+        return jsonify(trend)
+
+
 # this code allows you to see the all trending shoes in the trending section
 @app.route('/view-trending/', methods=['GET'])
 def view_trending():
