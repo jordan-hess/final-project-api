@@ -157,7 +157,7 @@ def view_trend():
         with sqlite3.connect('my_db.db') as connect:
             connect.row_factory = dict_factory
             cursor = connect.cursor()
-            cursor.execute("SELECT * FROM trend")
+            cursor.execute("SELECT * FROM trend where trend_id = 3")
             trend = cursor.fetchall()
 
     except Exception as e:
