@@ -148,7 +148,7 @@ def view_trends():
         return jsonify(trend)
 
 
-# this code allows you to see all the products in the trending section
+# this code allows you to see the 2nd trending shoe in the trending section
 @app.route('/view-trends/', methods=['GET'])
 def view_trend():
     trend = []
@@ -168,6 +168,47 @@ def view_trend():
         connect.close()
         return jsonify(trend)
 
+
+# this code allows you to see the 2nd trending shoe in the trending section
+@app.route('/view-trends3/', methods=['GET'])
+def view_trend3():
+    trend = []
+    try:
+
+        with sqlite3.connect('my_db.db') as connect:
+            connect.row_factory = dict_factory
+            cursor = connect.cursor()
+            cursor.execute("SELECT * FROM trend where trend_id = 5")
+            trend = cursor.fetchall()
+
+    except Exception as e:
+        connect.rollback()
+        print("There was an error fetching results from the database: " + str(e))
+
+    finally:
+        connect.close()
+        return jsonify(trend)
+
+
+# this code allows you to see the all trending shoes in the trending section
+@app.route('/view-trending/', methods=['GET'])
+def view_trending():
+    trend = []
+    try:
+
+        with sqlite3.connect('my_db.db') as connect:
+            connect.row_factory = dict_factory
+            cursor = connect.cursor()
+            cursor.execute("SELECT * FROM trend")
+            trend = cursor.fetchall()
+
+    except Exception as e:
+        connect.rollback()
+        print("There was an error fetching results from the database: " + str(e))
+
+    finally:
+        connect.close()
+        return jsonify(trend)
 
 # admin controls to create/add a product
 @app.route('/add-product/', methods=["POST"])
