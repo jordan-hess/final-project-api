@@ -62,6 +62,22 @@ def sale_tb():
 sale_tb()
 
 
+def trend_tb():
+    with sqlite3.connect('my_db.db') as connect:
+
+        connect.execute('CREATE TABLE IF NOT EXISTS trend(trend_id INTEGER PRIMARY KEY AUTOINCREMENT,'
+                        'trend_num TEXT NOT NULL,'
+                        'trend_cat TEXT NOT NULL,'
+                        'trend_name TEXT NOT NULL,'
+                        'trend_desc TEXT NOT NULL, '
+                        'trend_price TEXT NOT NULL, '
+                        'trend_image TEXT NOT NULL)')
+        print("Trending Products table was created successfully")
+
+
+trend_tb()
+
+
 # Returns the data in a dict
 def dict_factory(cursor, row):
     d = {}
@@ -109,6 +125,27 @@ def view_sale_product():
     finally:
         connect.close()
         return jsonify(products)
+
+
+# this code allows you to view products that are trending
+@app.route('/view-trend/', methods=['GET'])
+def view_trends():
+    trend = []
+    try:
+
+        with sqlite3.connect('my_db.db') as connect:
+            connect.row_factory = dict_factory
+            cursor = connect.cursor()
+            cursor.execute("SELECT * FROM trend")
+            trend = cursor.fetchall()
+
+    except Exception as e:
+        connect.rollback()
+        print("There was an error fetching results from the database: " + str(e))
+
+    finally:
+        connect.close()
+        return jsonify(trend)
 
 
 # admin controls to create/add a product
@@ -204,6 +241,47 @@ def sale_product():
     #     return jsonify(response)
 
 
+# admin controls to add to trending products
+@app.route('/add-trend/', methods=["POST"])
+# @jwt_required()
+def trend_add():
+    res = {}
+
+    if request.method == "POST":
+        tr_num = request.json['trend_num']
+        tr_cat = request.json['trend_cat']
+        tr_nm = request.json['trend_name']
+        tr_desc = request.json['trend_desc']
+        tr_price = request.json['trend_price']
+        tr_img = request.json['trend_image']
+
+        cloudinary.config(
+            cloud_name="final-project1",
+            api_key="733853268843835",
+            api_secret="iD-Rwj51sziP0V8ux1JCCFc7U24"
+        )
+        upload_result = None
+        app.logger.info('%s file_to_upload', tr_img)
+        if tr_img:
+            upload_result = cloudinary.uploader.upload(tr_img)  # Upload results
+            app.logger.info(upload_result)
+
+        with sqlite3.connect('my_db.db') as conn:
+            cursor = conn.cursor()
+            cursor.execute("INSERT INTO trend("
+                           "trend_num,"
+                           "trend_cat,"
+                           "trend_name,"
+                           "trend_desc,"
+                           "trend_price,"
+                           "trend_image) VALUES(?, ?, ?, ?, ?, ?)",
+                           (tr_num, tr_cat, tr_nm, tr_desc, tr_price, upload_result['url']))
+            conn.commit()
+            res['hurray!'] = "trending product successfully created"
+
+        return res
+
+
 # this code allows admins to delete products using its id
 @app.route('/delete-product/<int:product_id>/')
 # @jwt_required()
@@ -238,6 +316,29 @@ def delete_sale(sale_pro_id):
         with sqlite3.connect('my_db.db') as con:
             cur = con.cursor()
             cur.execute("DELETE FROM sale WHERE sale_pro_id=" + str(sale_pro_id))
+            con.commit()
+            response["msg"] = "A record was deleted successfully from the database."
+
+    except Exception as e:
+        con.rollback()
+        response["msg"] = "Error occurred when deleting a product in the database: " + str(e)
+
+    finally:
+        con.close()
+        return jsonify(response)
+
+
+# this code allows admins to delete products in the trending section
+@app.route('/delete-trend/<int:trend_id>')
+# jwt required()
+def delete_trend(trend_id):
+    response = {}
+
+    try:
+
+        with sqlite3.connect('my_db.db') as con:
+            cur = con.cursor()
+            cur.execute("DELETE FROM trend WHERE trend_id=" + str(trend_id))
             con.commit()
             response["msg"] = "A record was deleted successfully from the database."
 
@@ -438,24 +539,93 @@ def updating_sales(sale_pro_id):
         return jsonify(response)
 
 
-# function to fetch one product out of the database
-@app.route('/view-one/', methods=['GET'])
-def view_aproduct():
-    products = []
+# this code allows admins to edit elements in the products that are on sale
+@app.route('/update-trend/<int:trend_id>', methods=["PUT"])
+# @jwt_required()
+def update_trend(trend_id):
+    response = {}
     try:
 
-        with sqlite3.connect('my_db.db') as connect:
-            connect.row_factory = dict_factory
-            cursor = connect.cursor()
-            cursor.execute("SELECT * FROM items where product_id = 7")
-            products = cursor.fetchall()
+        if request.method == "PUT":
+
+            with sqlite3.connect('my_db.db') as conn:
+                print(request.json)
+                incoming_data = dict(request.json)
+                put_data = {}
+
+                # editing name of the product
+                if incoming_data.get("trend_name") is not None:
+                    put_data["trend_name"] = incoming_data.get("trend_name")
+
+                    with sqlite3.connect('my_db.db') as connection:
+                        cursor = connection.cursor()
+                        cursor.execute("UPDATE trend SET trend_name =? WHERE trend_id=?",
+                                       (put_data["trend_name"], trend_id))
+                        conn.commit()
+                        response['message'] = "Update was successful"
+
+                # editing the price of the product
+                if incoming_data.get("trend_price") is not None:
+                    put_data["trend_price"] = incoming_data.get("trend_price")
+
+                    with sqlite3.connect('my_db.db') as connection:
+                        cursor = connection.cursor()
+                        cursor.execute("UPDATE trend SET trend_price =? WHERE trend_id=?",
+                                       (put_data["trend_price"], trend_id))
+                        conn.commit()
+                        response['message'] = "Update was successful"
+
+                # editing the products category
+                if incoming_data.get("trend_cat") is not None:
+                    put_data["trend_cat"] = incoming_data.get("trend_cat")
+
+                    with sqlite3.connect('my_db.db') as connection:
+                        cursor = connection.cursor()
+                        cursor.execute("UPDATE trend SET trend_cat =? WHERE trend_id=?",
+                                       (put_data["trend_cat"], trend_id))
+                        conn.commit()
+                        response['message'] = "Update was successful"
+
+                # editing the description of the product
+                if incoming_data.get("trend_desc") is not None:
+                    put_data["trend_desc"] = incoming_data.get("trend_desc")
+
+                    with sqlite3.connect('my_db.db') as connection:
+                        cursor = connection.cursor()
+                        cursor.execute("UPDATE trend SET trend_desc =? WHERE trend_id=?",
+                                       (put_data["trend_desc"], trend_id))
+                        conn.commit()
+                        response['message'] = "Update was successful"
+
+                # editing the product number
+                if incoming_data.get("trend_num") is not None:
+                    put_data["trend_num"] = incoming_data.get("trend_num")
+
+                    with sqlite3.connect('my_db.db') as connection:
+                        cursor = connection.cursor()
+                        cursor.execute("UPDATE trend SET trend_num =? WHERE trend_id=?",
+                                       (put_data["trend_num"], trend_id))
+                        conn.commit()
+                        response['message'] = "Update was successfully"
+
+                # editing the products image
+                if incoming_data.get("trend_image") is not None:
+                    put_data["trend_image"] = incoming_data.get("trend_image")
+
+                    with sqlite3.connect('my_db.db') as connection:
+                        cursor = connection.cursor()
+                        cursor.execute("UPDATE trend SET trend_image =? WHERE trend_id=?",
+                                       (put_data["trend_image"], trend_id))
+                        conn.commit()
+                        response['message'] = "picture was updated successfully"
 
     except Exception as e:
-        connect.rollback()
-        print("There was an error fetching results from the database: " + str(e))
+        conn.rollback()
+        response["msg"] = "Error occurred when updating a product in the database: " + str(e)
 
     finally:
-        return jsonify(products)
+        conn.close()
+        return jsonify(response)
 
 
 if __name__ == "__main__":
