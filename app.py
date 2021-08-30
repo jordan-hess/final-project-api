@@ -3,13 +3,12 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import cloudinary
 import cloudinary.uploader
-# location = "C:\\Users\\jchno\\PycharmProjects\\final-project\\my_db.db"
 
 
 app = Flask(__name__)
 CORS(app)
 
-
+# Table Section
 # creating a register table using my database
 def register_tb():
 
@@ -63,6 +62,7 @@ sale_tb()
 
 
 def trend_tb():
+
     with sqlite3.connect('my_db.db') as connect:
 
         connect.execute('CREATE TABLE IF NOT EXISTS trend(trend_id INTEGER PRIMARY KEY AUTOINCREMENT,'
@@ -76,6 +76,22 @@ def trend_tb():
 
 
 trend_tb()
+
+def access_tb():
+
+    with sqlite3.connect('my_db.db') as connect:
+
+        connect.execute('CREATE TABLE IF NOT EXISTS access(access_id INTEGER PRIMARY KEY AUTOINCREMENT,'
+                        'access_num TEXT NOT NULL,'
+                        'access_cat TEXT NOT NULL,'
+                        'access_name TEXT NOT NULL,'
+                        'access_desc TEXT NOT NULL, '
+                        'access_price TEXT NOT NULL, '
+                        'access_image TEXT NOT NULL)')
+        print("Accessories table was created successfully")
+
+
+access_tb()
 
 
 # Returns the data in a dict
@@ -293,6 +309,28 @@ def view_trending():
         connect.close()
         return jsonify(trend)
 
+
+# this code allows you to see the all trending shoes in the trending section
+@app.route('/view-access/', methods=['GET'])
+def view_access():
+    accessories = []
+    try:
+
+        with sqlite3.connect('my_db.db') as connect:
+            connect.row_factory = dict_factory
+            cursor = connect.cursor()
+            cursor.execute("SELECT * FROM access")
+            accessories = cursor.fetchall()
+
+    except Exception as e:
+        connect.rollback()
+        print("There was an error fetching results from the database: " + str(e))
+
+    finally:
+        connect.close()
+        return jsonify(accessories)
+
+
 # admin controls to create/add a product
 @app.route('/add-product/', methods=["POST"])
 # @jwt_required()
@@ -425,6 +463,47 @@ def trend_add():
             res['hurray!'] = "trending product successfully created"
 
         return res
+
+
+# admin controls to add to trending products
+@app.route('/add-access/', methods=["POST"])
+# @jwt_required()
+def access_add():
+    resp = {}
+
+    if request.method == "POST":
+        as_num = request.json['access_num']
+        as_cat = request.json['access_cat']
+        as_nm = request.json['access_name']
+        as_desc = request.json['access_desc']
+        as_price = request.json['access_price']
+        as_img = request.json['access_image']
+
+        cloudinary.config(
+            cloud_name="final-project1",
+            api_key="733853268843835",
+            api_secret="iD-Rwj51sziP0V8ux1JCCFc7U24"
+        )
+        upload_result = None
+        app.logger.info('%s file_to_upload', as_img)
+        if as_img:
+            upload_result = cloudinary.uploader.upload(as_img)  # Upload results
+            app.logger.info(upload_result)
+
+        with sqlite3.connect('my_db.db') as conn:
+            cursor = conn.cursor()
+            cursor.execute("INSERT INTO access("
+                           "access_num,"
+                           "access_cat,"
+                           "access_name,"
+                           "access_desc,"
+                           "access_price,"
+                           "access_image) VALUES(?, ?, ?, ?, ?, ?)",
+                           (as_num, as_cat, as_nm, as_desc, as_price, upload_result['url']))
+            conn.commit()
+            resp['hurray!'] = "trending product successfully created"
+
+        return resp
 
 
 # this code allows admins to delete products using its id
