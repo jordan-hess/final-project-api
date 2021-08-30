@@ -575,6 +575,30 @@ def delete_trend(trend_id):
         return jsonify(response)
 
 
+# this code allows admins to delete products in the accessories section
+@app.route('/delete-access/<int:access_id>')
+# jwt required()
+def delete_ass(access_id):
+    response = {}
+
+    try:
+
+        with sqlite3.connect('my_db.db') as con:
+            cur = con.cursor()
+            cur.execute("DELETE FROM access WHERE access_id=" + str(access_id))
+            con.commit()
+            response["msg"] = "A record was deleted successfully from the database."
+
+    except Exception as e:
+        con.rollback()
+        response["msg"] = "Error occurred when deleting a product in the database: " + str(e)
+
+    finally:
+        con.close()
+        return jsonify(response)
+
+
+
 # this code allows admins to edit elements in the product
 @app.route('/update/<int:product_id>', methods=["PUT"])
 # @jwt_required()
