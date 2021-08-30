@@ -331,6 +331,28 @@ def view_access():
         return jsonify(accessories)
 
 
+# this code allows you to see accessories on sale
+@app.route('/view-sale-access/', methods=['GET'])
+def view_sale_access():
+    acc = []
+    try:
+
+        with sqlite3.connect('my_db.db') as connect:
+            connect.row_factory = dict_factory
+            cursor = connect.cursor()
+            cursor.execute("SELECT * FROM sale where sale_pro_id = 7 ")
+            acc = cursor.fetchall()
+
+    except Exception as e:
+        connect.rollback()
+        print("There was an error fetching results from the database: " + str(e))
+
+    finally:
+        connect.close()
+        return jsonify(acc)
+
+
+
 # admin controls to create/add a product
 @app.route('/add-product/', methods=["POST"])
 # @jwt_required()
