@@ -145,7 +145,7 @@ def view_sale_product():
 
 
 # this code allows you to view the number 1 product that is trending
-@app.route('/view-all-trend/', methods=['GET'])
+@app.route('/all-trend/', methods=['GET'])
 def view_my_trends():
     trending = []
     try:
