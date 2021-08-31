@@ -122,6 +122,66 @@ def view_product():
         return jsonify(products)
 
 
+# this code allows you to view the kicks on the homepage for the kicks section
+@app.route('/view-kicks1/', methods=['GET'])
+def view_kick():
+    sneaker = []
+    try:
+
+        with sqlite3.connect('my_db.db') as connect:
+            connect.row_factory = dict_factory
+            cursor = connect.cursor()
+            cursor.execute("SELECT * FROM items where product_id = 2")
+            sneaker = cursor.fetchall()
+
+    except Exception as e:
+        connect.rollback()
+        print("There was an error fetching results from the database: " + str(e))
+
+    finally:
+        return jsonify(sneaker)
+
+
+# this code allows you to view the kicks on the homepage for the kicks section
+@app.route('/view-kicks2/', methods=['GET'])
+def view_kick2():
+    sneak = []
+    try:
+
+        with sqlite3.connect('my_db.db') as connect:
+            connect.row_factory = dict_factory
+            cursor = connect.cursor()
+            cursor.execute("SELECT * FROM items where product_id = 3")
+            sneak = cursor.fetchall()
+
+    except Exception as e:
+        connect.rollback()
+        print("There was an error fetching results from the database: " + str(e))
+
+    finally:
+        return jsonify(sneak)
+
+
+# this code allows you to view the kicks on the homepage for the kicks section
+@app.route('/view-kicks3/', methods=['GET'])
+def view_kick3():
+    kicks = []
+    try:
+
+        with sqlite3.connect('my_db.db') as connect:
+            connect.row_factory = dict_factory
+            cursor = connect.cursor()
+            cursor.execute("SELECT * FROM items where product_id = 6")
+            kicks = cursor.fetchall()
+
+    except Exception as e:
+        connect.rollback()
+        print("There was an error fetching results from the database: " + str(e))
+
+    finally:
+        return jsonify(kicks)
+
+
 # this code allows you to view the products that are on sale
 @app.route('/view-sale/', methods=['GET'])
 def view_sale_product():
@@ -141,7 +201,6 @@ def view_sale_product():
     finally:
         connect.close()
         return jsonify(products)
-
 
 
 # this code allows you to view the number 1 product that is trending
@@ -414,7 +473,6 @@ def view_sale_access3():
     finally:
         connect.close()
         return jsonify(acc)
-
 
 
 # this code allows you to see accessories on sale
@@ -703,7 +761,6 @@ def delete_ass(access_id):
     finally:
         con.close()
         return jsonify(response)
-
 
 
 # this code allows admins to edit elements in the product
