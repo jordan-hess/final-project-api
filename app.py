@@ -203,6 +203,50 @@ def view_sale_product():
         return jsonify(products)
 
 
+# this code allows you to view the products that are on sale
+@app.route('/view-sale-kicks/', methods=['GET'])
+def view_sale_kick():
+    products = []
+    try:
+
+        with sqlite3.connect('my_db.db') as connect:
+            connect.row_factory = dict_factory
+            cursor = connect.cursor()
+            cursor.execute("SELECT * FROM sale where sale_pro_id = 9")
+            products = cursor.fetchall()
+
+    except Exception as e:
+        connect.rollback()
+        print("There was an error fetching results from the database: " + str(e))
+
+    finally:
+        connect.close()
+        return jsonify(products)
+
+
+# this code allows you to view the products that are on sale
+@app.route('/view-sale-kicks2/', methods=['GET'])
+def view_sale_kick2():
+    products = []
+    try:
+
+        with sqlite3.connect('my_db.db') as connect:
+            connect.row_factory = dict_factory
+            cursor = connect.cursor()
+            cursor.execute("SELECT * FROM sale where sale_pro_id = 16")
+            products = cursor.fetchall()
+
+    except Exception as e:
+        connect.rollback()
+        print("There was an error fetching results from the database: " + str(e))
+
+    finally:
+        connect.close()
+        return jsonify(products)
+
+
+
+
 # this code allows you to view the number 1 product that is trending
 @app.route('/all-trend/', methods=['GET'])
 def view_my_trends():
