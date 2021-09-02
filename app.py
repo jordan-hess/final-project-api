@@ -265,6 +265,7 @@ def view_sale_clothe():
         connect.close()
         return jsonify(products)
 
+
 # this code allows you to view the products that are on sale in the clothing section
 @app.route('/view-sale-clothe2/', methods=['GET'])
 def view_sale_clothe2():
