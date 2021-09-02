@@ -245,6 +245,26 @@ def view_sale_kick2():
         return jsonify(products)
 
 
+# this code allows you to view the products that are on sale in the clothing section
+@app.route('/view-sale-clothe/', methods=['GET'])
+def view_sale_clothe():
+    products = []
+    try:
+
+        with sqlite3.connect('my_db.db') as connect:
+            connect.row_factory = dict_factory
+            cursor = connect.cursor()
+            cursor.execute("SELECT * FROM sale where sale_pro_cat = Hoodie")
+            products = cursor.fetchall()
+
+    except Exception as e:
+        connect.rollback()
+        print("There was an error fetching results from the database: " + str(e))
+
+    finally:
+        connect.close()
+        return jsonify(products)
+
 
 
 # this code allows you to view the number 1 product that is trending
