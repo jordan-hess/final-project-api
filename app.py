@@ -246,7 +246,7 @@ def view_sale_kick2():
 
 
 # this code allows you to view the products that are on sale in the clothing section
-@app.route('/view-sale-clothe/', methods=['GET'])
+@app.route('/view-sale-clothe1/', methods=['GET'])
 def view_sale_clothe():
     products = []
     try:
@@ -254,7 +254,7 @@ def view_sale_clothe():
         with sqlite3.connect('my_db.db') as connect:
             connect.row_factory = dict_factory
             cursor = connect.cursor()
-            cursor.execute("SELECT * FROM sale where sale_pro_cat = Hoodie")
+            cursor.execute("SELECT * FROM sale where sale_pro_id = 1+3")
             products = cursor.fetchall()
 
     except Exception as e:
@@ -265,6 +265,172 @@ def view_sale_clothe():
         connect.close()
         return jsonify(products)
 
+# this code allows you to view the products that are on sale in the clothing section
+@app.route('/view-sale-clothe2/', methods=['GET'])
+def view_sale_clothe2():
+    products = []
+    try:
+
+        with sqlite3.connect('my_db.db') as connect:
+            connect.row_factory = dict_factory
+            cursor = connect.cursor()
+            cursor.execute("SELECT * FROM sale where sale_pro_id = 1+4")
+            products = cursor.fetchall()
+
+    except Exception as e:
+        connect.rollback()
+        print("There was an error fetching results from the database: " + str(e))
+
+    finally:
+        connect.close()
+        return jsonify(products)
+
+
+# this code allows you to view the products that are on sale in the clothing section
+@app.route('/view-sale-clothe3/', methods=['GET'])
+def view_sale_clothe3():
+    products = []
+    try:
+
+        with sqlite3.connect('my_db.db') as connect:
+            connect.row_factory = dict_factory
+            cursor = connect.cursor()
+            cursor.execute("SELECT * FROM sale where sale_pro_id = 2+2+2")
+            products = cursor.fetchall()
+
+    except Exception as e:
+        connect.rollback()
+        print("There was an error fetching results from the database: " + str(e))
+
+    finally:
+        connect.close()
+        return jsonify(products)
+
+
+# this code allows you to view the products that are on sale in the clothing section
+@app.route('/view-sale-clothe4/', methods=['GET'])
+def view_sale_clothe4():
+    products = []
+    try:
+
+        with sqlite3.connect('my_db.db') as connect:
+            connect.row_factory = dict_factory
+            cursor = connect.cursor()
+            cursor.execute("SELECT * FROM sale where sale_pro_id = 4+5-1")
+            products = cursor.fetchall()
+
+    except Exception as e:
+        connect.rollback()
+        print("There was an error fetching results from the database: " + str(e))
+
+    finally:
+        connect.close()
+        return jsonify(products)
+
+
+# this code allows you to view the products that are on sale in the clothing section
+@app.route('/view-sale-clothe5/', methods=['GET'])
+def view_sale_clothe5():
+    products = []
+    try:
+
+        with sqlite3.connect('my_db.db') as connect:
+            connect.row_factory = dict_factory
+            cursor = connect.cursor()
+            cursor.execute("SELECT * FROM sale where sale_pro_id = 2+4+3+2")
+            products = cursor.fetchall()
+
+    except Exception as e:
+        connect.rollback()
+        print("There was an error fetching results from the database: " + str(e))
+
+    finally:
+        connect.close()
+        return jsonify(products)
+
+
+# this code allows you to view the products that are on sale in the clothing section
+@app.route('/view-sale-clothe6/', methods=['GET'])
+def view_sale_clothe6():
+    products = []
+    try:
+
+        with sqlite3.connect('my_db.db') as connect:
+            connect.row_factory = dict_factory
+            cursor = connect.cursor()
+            cursor.execute("SELECT * FROM sale where sale_pro_id = 6+6")
+            products = cursor.fetchall()
+
+    except Exception as e:
+        connect.rollback()
+        print("There was an error fetching results from the database: " + str(e))
+
+    finally:
+        connect.close()
+        return jsonify(products)
+
+
+# this code allows you to view the products that are on sale in the clothing section
+@app.route('/view-sale-clothe7/', methods=['GET'])
+def view_sale_clothe7():
+    products = []
+    try:
+
+        with sqlite3.connect('my_db.db') as connect:
+            connect.row_factory = dict_factory
+            cursor = connect.cursor()
+            cursor.execute("SELECT * FROM sale where sale_pro_id = 10+3")
+            products = cursor.fetchall()
+
+    except Exception as e:
+        connect.rollback()
+        print("There was an error fetching results from the database: " + str(e))
+
+    finally:
+        connect.close()
+        return jsonify(products)
+
+
+# this code allows you to view the products that are on sale in the clothing section
+@app.route('/view-sale-clothe8/', methods=['GET'])
+def view_sale_clothe8():
+    products = []
+    try:
+
+        with sqlite3.connect('my_db.db') as connect:
+            connect.row_factory = dict_factory
+            cursor = connect.cursor()
+            cursor.execute("SELECT * FROM sale where sale_pro_id = 5+5+5")
+            products = cursor.fetchall()
+
+    except Exception as e:
+        connect.rollback()
+        print("There was an error fetching results from the database: " + str(e))
+
+    finally:
+        connect.close()
+        return jsonify(products)
+
+
+# this code allows you to view the products that are on sale in the clothing section
+@app.route('/view-sale-clothe9/', methods=['GET'])
+def view_sale_clothe9():
+    products = []
+    try:
+
+        with sqlite3.connect('my_db.db') as connect:
+            connect.row_factory = dict_factory
+            cursor = connect.cursor()
+            cursor.execute("SELECT * FROM sale where sale_pro_id = 15+1+2")
+            products = cursor.fetchall()
+
+    except Exception as e:
+        connect.rollback()
+        print("There was an error fetching results from the database: " + str(e))
+
+    finally:
+        connect.close()
+        return jsonify(products)
 
 
 # this code allows you to view the number 1 product that is trending
