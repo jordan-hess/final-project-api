@@ -434,6 +434,48 @@ def view_sale_clothe9():
         return jsonify(products)
 
 
+# this code allows you to view the products that are new in the clothing section
+@app.route('/view-sale-clothe10/', methods=['GET'])
+def view_sale_clothe10():
+    products = []
+    try:
+
+        with sqlite3.connect('my_db.db') as connect:
+            connect.row_factory = dict_factory
+            cursor = connect.cursor()
+            cursor.execute("SELECT * FROM items where product_id = 2+2")
+            products = cursor.fetchall()
+
+    except Exception as e:
+        connect.rollback()
+        print("There was an error fetching results from the database: " + str(e))
+
+    finally:
+        connect.close()
+        return jsonify(products)
+
+
+# this code allows you to view the products that are new in the clothing section
+@app.route('/view-sale-clothe11/', methods=['GET'])
+def view_sale_clothe11():
+    products = []
+    try:
+
+        with sqlite3.connect('my_db.db') as connect:
+            connect.row_factory = dict_factory
+            cursor = connect.cursor()
+            cursor.execute("SELECT * FROM items where product_id = 2+3")
+            products = cursor.fetchall()
+
+    except Exception as e:
+        connect.rollback()
+        print("There was an error fetching results from the database: " + str(e))
+
+    finally:
+        connect.close()
+        return jsonify(products)
+
+
 # this code allows you to view the number 1 product that is trending
 @app.route('/all-trend/', methods=['GET'])
 def view_my_trends():
