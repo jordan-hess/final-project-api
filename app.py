@@ -8,6 +8,31 @@ import cloudinary.uploader
 app = Flask(__name__)
 CORS(app)
 
+
+# DOM manipulation for users
+class User(object):
+    def __init__(self, id, username, password):
+        self.id = id
+        self.username = username
+        self.password = password
+
+
+# creating my register table
+def register_table():
+    connect = sqlite3.connect('my_db.db')
+
+    connect.execute('CREATE TABLE IF NOT EXISTS user (user_id INTEGER PRIMARY KEY AUTOINCREMENT,'
+                    'name TEXT NOT NULL,'
+                    'username TEXT NOT NULL,'
+                    'password TEXT NOT NULL, '
+                    'email TEXT NOT NULL)')
+    print("User table was created successfully")
+    connect.close()
+
+
+register_table()
+
+
 # Table Section
 # creating a register table using my database
 def register_tb():
@@ -94,12 +119,70 @@ def access_tb():
 access_tb()
 
 
+# User athentication
+# user = fetch_user()
+# username_table = {u.username: u for u in user}
+# userid_table = {u.id: u for u in user}
+
+
+# def authenticate(username, password):
+#     user = username_table.get(username, None)
+#     if user and hmac.compare_digest(user.password.encode('utf-8'), password.encode('utf-8')):
+#         return user
+
+
+# def identity(payload):
+#     user_id = payload['identity']
+#     return userid_table.get(user_id, None)
+
+
 # Returns the data in a dict
 def dict_factory(cursor, row):
     d = {}
     for i, x in enumerate(cursor.description):
         d[x[0]] = row[i]
     return d
+
+
+# fetching the data from my database
+@app.route('/view-users/', methods=['GET'])
+def fetch_user():
+    new_data = {}
+
+    if request.method == "GET":
+        with sqlite3.connect('my_db.db') as conn:
+            conn.row_factory = dict_factory
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM user")
+            users = cursor.fetchall()
+
+            new_data["data"] = users
+            return new_data
+
+
+# registration page
+@app.route('/adding-users/', methods=['POST'])
+def add_users():
+    try:
+
+        names = request.json['name']
+        username = request.json['username']
+        password = request.json['password']
+        email = request.json['email']
+
+        with sqlite3.connect('my_db.db') as con:
+
+            cursor = con.cursor()
+            cursor.execute("INSERT INTO user (name, username, password, email) VALUES (?, ?, ?, ?)", (names, username, password, email))
+            con.commit()
+            msg = username + " was added to the database"
+            con.rollback()
+
+        return jsonify(msg)
+
+    except Exception as e:
+        error_msg = "Error occurred in adding user to the database" + str(e)
+        return jsonify(error_msg)
 
 
 # this code allows you to view the products
@@ -942,6 +1025,25 @@ def access_add():
             resp['hurray!'] = "trending product successfully created"
 
         return resp
+
+
+# this code allows you to delete products using its id
+@app.route('/delete-users/<int:user_id>/')
+# @jwt_required()
+def delete_user(user_id):
+    response = {}
+    try:
+        with sqlite3.connect('my_db.db') as con:
+            cur = con.cursor()
+            cur.execute("DELETE FROM user WHERE user_id=" + str(user_id))
+            con.commit()
+            response["msg"] = "A record was deleted successfully from the database."
+    except Exception as e:
+        con.rollback()
+        response["msg"] = "Error occurred when deleting the user from the database: " + str(e)
+    finally:
+        con.close()
+        return jsonify(response)
 
 
 # this code allows admins to delete products using its id
