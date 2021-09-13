@@ -144,7 +144,7 @@ def dict_factory(cursor, row):
     return d
 
 
-# fetching the data from my database
+# fetching the users from my database
 @app.route('/view-users/', methods=['GET'])
 def fetch_user():
     new_data = {}
