@@ -165,7 +165,7 @@ def fetch_user():
 def add_users():
     try:
 
-        names = request.json['name']
+        name = request.json['name']
         username = request.json['username']
         password = request.json['password']
         email = request.json['email']
@@ -173,7 +173,8 @@ def add_users():
         with sqlite3.connect('my_db.db') as con:
 
             cursor = con.cursor()
-            cursor.execute("INSERT INTO user (name, username, password, email) VALUES (?, ?, ?, ?)", (names, username, password, email))
+            cursor.execute("INSERT INTO user (name, username, password, email) VALUES (?, ?, ?, ?)", (name, username,
+                                                                                                      password, email))
             con.commit()
             msg = username + " was added to the database"
             con.rollback()
